@@ -1,0 +1,29 @@
+services:
+  mysql:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: "{{ db_mysql_root_password }}"
+      MYSQL_DATABASE: "{{ db_mysql_database }}"
+      MYSQL_USER: "{{ db_mysql_user }}"
+      MYSQL_PASSWORD: "{{ db_mysql_password }}"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"    # Expose MySQL to host
+
+  redis:
+    image: redis:7-alpine
+    command:
+      - /bin/sh
+      - -c
+      - redis-server --requirepass "{{ db_redis_password }}"
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"    # Expose Redis to host
+
+volumes:
+  mysql_data:
+  redis_data:

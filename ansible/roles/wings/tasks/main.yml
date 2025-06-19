@@ -1,0 +1,34 @@
+---
+- name: Create Wings directory
+  ansible.builtin.file:
+    path: "/etc/pterodactyl"
+    state: directory
+    owner: "{{ panel_pterodactyl_panel_user }}"
+    group: "{{ panel_pterodactyl_panel_user }}"
+    mode: '0755'
+
+- name: Download Wings binary
+  ansible.builtin.get_url:
+    url: "https://github.com/pterodactyl/wings/releases/latest/download/wings_linux_arm64"
+    dest: "/usr/local/bin/wings"
+    mode: '0755'
+    owner: "{{ panel_pterodactyl_panel_user }}"
+    group: "{{ panel_pterodactyl_panel_user }}"
+
+- name: Copy Wings service file
+  ansible.builtin.copy:
+    src: "files/wings.service"
+    dest: "/etc/systemd/system/wings.service"
+    owner: "root"
+    group: "root"
+    mode: '0644'
+
+- name: Reload systemd to recognize the new Wings service
+  ansible.builtin.systemd:
+    daemon_reload: true
+
+- name: Enable and start Wings service
+  ansible.builtin.systemd:
+    name: wings
+    enabled: true
+    state: started

@@ -1,0 +1,9 @@
+---
+
+- name: Deploy Pterodactyl Stack
+  hosts: all
+  become: true
+  roles:
+    - db
+    - panel
+    - wings

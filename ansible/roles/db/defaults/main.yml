@@ -1,0 +1,6 @@
+---
+db_mysql_root_password: "rootpass"
+db_mysql_database: "panel"
+db_mysql_user: "pterodactyl"
+db_mysql_password: "userpass"
+db_redis_password: "redispass"

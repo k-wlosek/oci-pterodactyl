@@ -1,0 +1,9 @@
+---
+- name: Create user for Pterodactyl panel
+  ansible.builtin.user:
+    name: "{{ panel_pterodactyl_panel_user }}"
+    comment: "Pterodactyl Panel User"
+    shell: /bin/bash
+    create_home: true
+    home: "/home/{{ panel_pterodactyl_panel_user }}"
+    state: present

@@ -3,3 +3,8 @@ terraform/terraform.tfstate.backup
 terraform/.terraform
 terraform/.terraform.lock.hcl
 terraform/terraform.tfvars
+ansible/.ansible
+ansible/.venv
+ansible/.vscode
+ansible/group_vars/all.vault.yml
+ansible/inventory/hosts.yml

@@ -1,0 +1,22 @@
+---
+- name: Create directory for DB compose
+  ansible.builtin.file:
+    path: /opt/pterodactyl-db
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Deploy docker-compose.yml for MySQL and Redis
+  ansible.builtin.template:
+    src: docker-compose.yml.j2
+    dest: /opt/pterodactyl-db/docker-compose.yml
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Start MySQL and Redis containers
+  community.docker.docker_compose_v2:
+    project_src: /opt/pterodactyl-db
+    state: present
+    remove_orphans: true

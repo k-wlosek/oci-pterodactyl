@@ -1,0 +1,41 @@
+---
+- name: Ensure PHP repository is installed
+  ansible.builtin.apt_repository:
+    repo: "ppa:ondrej/php"
+    state: present
+
+- name: Install dependencies
+  ansible.builtin.apt:
+    name:
+      - php8.3
+      - php8.3-common
+      - php8.3-gd
+      - php8.3-mysql
+      - php8.3-mbstring
+      - php8.3-bcmath
+      - php8.3-xml
+      - php8.3-fpm
+      - php8.3-curl
+      - php8.3-zip
+      - nginx
+      - tar
+      - unzip
+      - git
+    state: present
+    update_cache: true
+
+- name: Install Composer
+  ansible.builtin.get_url:
+    url: https://getcomposer.org/installer
+    dest: /tmp/composer-setup.php
+    mode: '0755'
+
+- name: Run Composer installer
+  ansible.builtin.command: "php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=composer"
+  args:
+    creates: "/usr/local/bin/composer"
+
+- name: Remove Composer installer script
+  ansible.builtin.file:
+    path: /tmp/composer-setup.php
+    state: absent

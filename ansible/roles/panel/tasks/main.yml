@@ -1,0 +1,98 @@
+---
+- name: Install prerequisites for the panel
+  ansible.builtin.include_tasks: prerequisites.yml
+
+- name: Create user for Pterodactyl panel
+  ansible.builtin.include_tasks: user.yml
+
+- name: Create directories for the panel
+  ansible.builtin.file:
+    path: "/var/www/pterodactyl"
+    state: directory
+    owner: "{{ panel_pterodactyl_panel_user }}"
+    group: "{{ panel_pterodactyl_panel_user }}"
+    mode: '0755'
+
+- name: Download the panel
+  ansible.builtin.get_url:
+    url: "https://github.com/pterodactyl/panel/releases/download/{{ panel_pterodactyl_panel_version }}/panel.tar.gz"
+    dest: "/tmp/panel.tar.gz"
+    owner: "{{ panel_pterodactyl_panel_user }}"
+    group: "{{ panel_pterodactyl_panel_user }}"
+    mode: '0644'
+
+- name: Extract the panel
+  ansible.builtin.unarchive:
+    src: "/tmp/panel.tar.gz"
+    dest: "/var/www/pterodactyl"
+    remote_src: true
+    owner: "{{ panel_pterodactyl_panel_user }}"
+    group: "{{ panel_pterodactyl_panel_user }}"
+    mode: '0755'
+
+- name: Set permissions for the panel storage
+  ansible.builtin.file:
+    path: "/var/www/pterodactyl/storage"
+    mode: '0755'
+    recurse: true
+
+- name: Set permissions for the panel bootstrap cache
+  ansible.builtin.file:
+    path: "/var/www/pterodactyl/bootstrap/cache"
+    mode: '0755'
+
+- name: Template the .env file for the panel
+  ansible.builtin.template:
+    src: "templates/.env.j2"
+    dest: "/var/www/pterodactyl/.env"
+    owner: "{{ panel_pterodactyl_panel_user }}"
+    group: "{{ panel_pterodactyl_panel_user }}"
+    mode: '0644'
+
+- name: Install Composer dependencies
+  ansible.builtin.command:
+    cmd: "composer install --no-dev --optimize-autoloader"
+    chdir: "/var/www/pterodactyl"
+    creates: "/var/www/pterodactyl/vendor"
+  environment:
+    COMPOSER_ALLOW_SUPERUSER: "1"
+
+- name: Seed the database
+  ansible.builtin.command:
+    cmd: "php artisan migrate --seed --force"
+    chdir: "/var/www/pterodactyl"
+  changed_when: false
+
+- name: Change ownership of the panel files
+  ansible.builtin.file:
+    path: "/var/www/pterodactyl"
+    owner: "www-data"
+    group: "www-data"
+    mode: '0755'
+    recurse: true
+
+- name: Add Queue worker to crontab
+  ansible.builtin.lineinfile:
+    path: "/etc/crontab"
+    line: "* * * * * php /var/www/pterodactyl/artisan schedule:run >> /dev/null 2>&1"
+
+- name: Create systemd service for the panel
+  ansible.builtin.copy:
+    src: "files/pteroq.service"
+    dest: "/etc/systemd/system/pteroq.service"
+    owner: "root"
+    group: "root"
+    mode: '0644'
+
+- name: Reload systemd to recognize the new service
+  ansible.builtin.systemd:
+    daemon_reload: true
+
+- name: Enable and start the Pterodactyl queue worker service
+  ansible.builtin.systemd:
+    name: pteroq
+    enabled: true
+    state: started
+
+- name: Configure Nginx for the Pterodactyl panel
+  ansible.builtin.include_tasks: nginx.yml
