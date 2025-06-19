@@ -4,6 +4,9 @@
     path: "/etc/nginx/sites-enabled/default"
     state: absent
 
+- name: Create certificates
+  ansible.builtin.include_tasks: certbot.yml
+
 - name: Template the Nginx configuration for the Pterodactyl panel
   ansible.builtin.template:
     src: "templates/pterodactyl.conf.j2"

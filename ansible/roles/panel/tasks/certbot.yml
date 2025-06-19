@@ -1,0 +1,39 @@
+---
+- name: Ensure secrets directory exists
+  ansible.builtin.file:
+    path: "/root/.secrets"
+    state: directory
+    owner: "root"
+    group: "root"
+    mode: '0700'
+
+- name: Ensure Cloudflare config
+  ansible.builtin.template:
+    src: "templates/cloudflare.ini.j2"
+    dest: "/root/.secrets/cloudflare.ini"
+    owner: "root"
+    group: "root"
+    mode: '0600'
+
+- name: Obtain wildcard SSL certificate
+  ansible.builtin.command: >
+    certbot certonly
+    --dns-cloudflare
+    --dns-cloudflare-credentials /root/.secrets/cloudflare.ini
+    --dns-cloudflare-propagation-seconds 30
+    -d "*.{{ panel_base_fqdn }}"
+    -d "{{ panel_base_fqdn }}"
+    -d "{{ panel_pterodactyl_domain | regex_replace('^https?://', '') }}"
+    -d "{{ panel_wings_fqdn | regex_replace('^https?://', '') }}"
+    --non-interactive --agree-tos
+    -m "{{ panel_certbot_email }}"
+    --keep-until-expiring
+  args:
+    creates: "/etc/letsencrypt/live/{{ panel_base_fqdn }}/fullchain.pem"
+
+# Certbot installs a systemd timer to automatically renew certificates.
+- name: Ensure certbot timer is enabled
+  ansible.builtin.systemd:
+    name: "certbot.timer"
+    enabled: true
+    state: started

@@ -21,6 +21,9 @@
       - tar
       - unzip
       - git
+      - certbot
+      - python3-certbot-nginx
+      - python3-certbot-dns-cloudflare
     state: present
     update_cache: true
 
