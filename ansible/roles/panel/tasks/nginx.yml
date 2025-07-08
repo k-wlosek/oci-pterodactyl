@@ -1,8 +1,17 @@
 ---
-- name: Remove the default Nginx configuration
+- name: Template the default server block configuration for Nginx
+  ansible.builtin.template:
+    src: "templates/default.conf.j2"
+    dest: "/etc/nginx/sites-available/default"
+    owner: "root"
+    group: "root"
+    mode: '0644'
+
+- name: Create a symlink for the default Nginx configuration
   ansible.builtin.file:
-    path: "/etc/nginx/sites-enabled/default"
-    state: absent
+    src: "/etc/nginx/sites-available/default"
+    dest: "/etc/nginx/sites-enabled/default"
+    state: link
 
 - name: Create certificates
   ansible.builtin.include_tasks: certbot.yml
