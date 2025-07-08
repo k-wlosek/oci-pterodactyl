@@ -6,5 +6,7 @@ terraform/terraform.tfvars
 ansible/.ansible
 ansible/.venv
 ansible/.vscode
-ansible/group_vars/all.vault.yml
+ansible/group_vars/all.yml
 ansible/inventory/hosts.yml
+.ansible/.lock
+.vscode/settings.json
