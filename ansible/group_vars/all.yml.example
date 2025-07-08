@@ -2,15 +2,20 @@ db_mysql_database: "panel"
 db_mysql_user: "pterodactyl"
 db_mysql_password: "rootpass"
 db_redis_password: "redispass"
+
+
 panel_pterodactyl_panel_user: "pterodactyl"
 panel_pterodactyl_panel_version: "v1.11.11"
 panel_app_key: "base64_app_key"
 panel_hashids_salt: "hashids_salt_value"
+
 panel_base_fqdn: "example.com"  # Replace with actual FQDN
 panel_pterodactyl_domain: "https://ptero.{{ panel_base_fqdn }}"  # Replace with actual domain
 panel_wings_fqdn: "https://wings1.{{ panel_base_fqdn }}"  # Replace with actual Wings FQDN
 panel_cloudflare_api_token: "your_cloudflare_api_token_here"  # Replace with actual Cloudflare API token
 panel_certbot_email: "user@example.com"  # Replace with actual email for certbot
+
+
 mcrouter_mappings:
   - domain: mc1.failure.ovh
     port: 25566

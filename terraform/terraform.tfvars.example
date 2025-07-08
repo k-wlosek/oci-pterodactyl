@@ -1,0 +1,8 @@
+tenancy_ocid        = "ocid1.tenancy.oc1..."
+user_ocid           = "ocid1.user.oc1..."
+fingerprint         = "ca:fe:be:ef:..."
+private_key_path    = "~/.oci/key.pem"
+region              = "region-name"
+compartment_id      = "ocid1.compartment-or-tenancy.oc1..xxxxxxEXAMPLExxxxxx"
+ssh_public_key_path = "~/.ssh/id_rsa.pub"
+vm_name             = "pterodactyl-vm"
