@@ -11,3 +11,9 @@ panel_pterodactyl_domain: "https://ptero.{{ panel_base_fqdn }}"  # Replace with 
 panel_wings_fqdn: "https://wings1.{{ panel_base_fqdn }}"  # Replace with actual Wings FQDN
 panel_cloudflare_api_token: "your_cloudflare_api_token_here"  # Replace with actual Cloudflare API token
 panel_certbot_email: "user@example.com"  # Replace with actual email for certbot
+mcrouter_mappings:
+  - domain: mc1.failure.ovh
+    port: 25566
+  - domain: mc2.failure.ovh
+    port: 25567
+mcrouter_version: "1.32.3"

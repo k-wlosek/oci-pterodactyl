@@ -1,0 +1,7 @@
+---
+mcrouter_mappings:
+  - domain: "mc1.{{ panel_base_fqdn }}"
+    port: 25566
+  - domain: "mc2.{{ panel_base_fqdn }}"
+    port: 25567
+mcrouter_version: "1.32.3"

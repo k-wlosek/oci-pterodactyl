@@ -1,0 +1,12 @@
+---
+- name: Create mc-router container
+  community.docker.docker_container:
+    name: mc-router
+    image: "itzg/mc-router:{{ mcrouter_version }}"
+    state: started
+    restart_policy: unless-stopped
+    network_mode: host # Needed for access to Minecraft servers on the host
+    labels:
+      service.note: "Handles Minecraft domain-based routing on port 25565"
+    command: >-
+      --mapping={% for item in mcrouter_mappings %}{{ item.domain }}=127.0.0.1:{{ item.port }}{% if not loop.last %},{% endif %}{% endfor %}
