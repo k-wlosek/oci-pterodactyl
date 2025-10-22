@@ -37,3 +37,15 @@
     name: "certbot.timer"
     enabled: true
     state: started
+
+- name: Persist Certbot post-renew hook
+  ansible.builtin.copy:
+    dest: /etc/letsencrypt/renewal-hooks/post/reload-nginx.sh
+    content: |
+      #!/bin/bash
+      if systemctl is-active --quiet nginx; then
+        systemctl reload nginx
+      fi
+    owner: "root"
+    group: "root"
+    mode: '0755'
