@@ -1,0 +1,53 @@
+---
+- name: Include the network tasks
+  ansible.builtin.include_tasks:
+    file: network.yml
+
+- name: Create the folders
+  ansible.builtin.file:
+    path: "/opt/{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0770'
+  loop:
+    - caddy/
+    - caddy/data
+    - caddy/config
+    - caddy/logs
+
+- name: Template the Caddyfile
+  ansible.builtin.template:
+    src: Caddyfile.j2
+    owner: root
+    group: 101
+    mode: '0644'
+    dest: "/opt/caddy/Caddyfile"
+
+- name: Make sure the Caddy container is created and running
+  register: caddy_result
+  retries: 5
+  until: caddy_result is succeeded
+  community.general.docker_container:
+    name: "caddy"
+    image: "ghcr.io/caddybuilds/caddy-cloudflare:{{ caddy_version }}"
+    capabilities:
+      - NET_ADMIN
+    networks:
+      - name: proxy_network
+      - name: caddy_admin
+        ipv4_address: 10.9.1.2
+    restart_policy: unless-stopped
+    ports:
+      - "127.0.0.1:2019:2019"
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+
+    volumes:
+      - "/opt/caddy/Caddyfile:/etc/caddy/Caddyfile:ro"
+      - "/opt/caddy/data:/data"
+      - "/opt/caddy/config:/config"
+      - "/opt/caddy/logs:/logs"
+    env:
+      CLOUDFLARE_API_TOKEN: "{{ panel_cloudflare_api_token | default('') }}"

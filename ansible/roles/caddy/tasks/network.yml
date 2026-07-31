@@ -1,0 +1,16 @@
+---
+- name: Create the reverse proxy network
+  community.general.docker_network:
+    name: proxy_network
+    ipam_config:
+      - subnet: 10.8.2.0/24
+        gateway: 10.8.2.1
+        iprange: 10.8.2.0/24
+
+- name: Create the caddy admin network
+  community.general.docker_network:
+    name: caddy_admin
+    ipam_config:
+      - subnet: 10.9.1.0/30
+        gateway: 10.9.1.1
+        iprange: 10.9.1.0/30

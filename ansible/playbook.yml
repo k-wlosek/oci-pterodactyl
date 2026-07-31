@@ -5,6 +5,7 @@
   become: true
   roles:
     - db
+    - caddy
     - panel
     - wings
     - mcrouter
