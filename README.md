@@ -6,14 +6,13 @@ This project automates the deployment of a complete Pterodactyl Panel and Wings 
 ## Architecture
 
 The deployment creates:
-- **OCI VM.Standard.A1.Flex instance** (2 OCPUs, 12GB RAM, 100GB storage) running Ubuntu 22.04 (Free Tier eligible)
-- **Pterodactyl Panel** - Web-based game server management interface
+- **OCI VM.Standard.A1.Flex instance** (2 OCPUs, 12GB RAM, 100GB storage) running Ubuntu 24.04 (Free Tier eligible)
+- **Pterodactyl Panel** - Web-based game server management interface in Docker
 - **Pterodactyl Wings** - Game server daemon
-- **MySQL Database** - Panel data storage via Docker
-- **Redis** - Caching and session storage via Docker
-- **MCRouter** - Minecraft server proxy for multiple game servers
-- **Nginx** - Reverse proxy
-- **Certbot** - Automatic SSL certificate management via Cloudflare DNS
+- **MySQL Database** - Panel data storage in Docker
+- **Redis** - Caching and session storage in Docker
+- **MCRouter** - Minecraft server proxy for multiple game servers in Docker
+- **Caddy** - Reverse proxy and automatic SSL certificate management via Cloudflare DNS in Docker
 
 ## Prerequisites
 
@@ -22,7 +21,7 @@ The deployment creates:
 3. **Ansible** installed locally
 4. **SSH Key Pair** for server access
 5. **Domain name** with Cloudflare DNS management
-6. **Cloudflare API Token** for SSL certificate generation
+6. **Cloudflare API Token** for SSL certificate generation with Zone.Zone Read and Zone.DNS Edit permissions
 
 ## Quick Start
 
@@ -92,7 +91,6 @@ db_redis_password: "your_secure_redis_password"
 
 # Panel Configuration
 panel_pterodactyl_panel_user: "pterodactyl"
-panel_pterodactyl_panel_version: "v1.11.11"
 panel_app_key: "your_base64_encoded_app_key"
 panel_hashids_salt: "your_hashids_salt_value"
 panel_base_fqdn: "yourdomain.com"
@@ -109,7 +107,6 @@ mcrouter_mappings:
     port: 25566
   - domain: mc2.yourdomain.com
     port: 25567
-mcrouter_version: "1.32.3"
 ```
 
 You can generate the `panel_app_key` using:
@@ -117,7 +114,7 @@ You can generate the `panel_app_key` using:
 ```bash
 php artisan key:generate --force --show
 ```
-in the Pterodactyl Panel directory. You can download the Panel and run the command locally to generate the key.
+in a local Pterodactyl Panel directory or let panel generate it during the deployment.
 
 
 If you don't need MCRouter, you can comment it out in the playbook and not include the configuration in `group_vars/all.yml`.
@@ -140,8 +137,7 @@ all:
 After deployment, create your first admin user for the Pterodactyl Panel:
 
 ```bash
-cd /var/www/pterodactyl
-php artisan p:user:make
+docker exec -it panel php artisan p:user:make
 ```
 
 ### 2. Configure Firewall
@@ -159,7 +155,8 @@ Ensure the following ports are open in your OCI security list and firewall:
 2. Go to Admin → Nodes → Create New
 3. Configure the node with your Wings FQDN
 4. Copy the generated configuration to `/etc/pterodactyl/config.yml`
-5. Restart Wings: `systemctl restart wings`
+5. If needed, adjust the Wings configuration for your specific setup. You can find Caddy's certificate and key paths in `/opt/caddy/data/caddy/certificates` if you choose to use SSL with Wings.
+6. Restart Wings: `systemctl restart wings`
 
 ## Project Structure
 
@@ -175,6 +172,7 @@ Ensure the following ports are open in your OCI security list and firewall:
     ├── inventory/       # Host inventory
     └── roles/           # Ansible roles
         ├── db/          # MySQL & Redis containers
+        ├── caddy/       # Caddy reverse proxy
         ├── panel/       # Pterodactyl Panel
         ├── wings/       # Pterodactyl Wings daemon
         └── mcrouter/    # Minecraft proxy

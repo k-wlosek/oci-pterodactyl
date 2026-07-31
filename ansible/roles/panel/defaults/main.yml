@@ -1,5 +1,4 @@
 ---
-panel_pterodactyl_panel_user: "pterodactyl"
 panel_pterodactyl_panel_version: "v1.14.1"
 panel_app_key: "base64encoded_key_here"  # Replace with actual base64 encoded key
 panel_hashids_salt: "salt_value_here"  # Replace with actual salt value

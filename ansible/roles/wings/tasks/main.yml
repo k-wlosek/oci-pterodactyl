@@ -3,8 +3,8 @@
   ansible.builtin.file:
     path: "/etc/pterodactyl"
     state: directory
-    owner: "{{ panel_pterodactyl_panel_user }}"
-    group: "{{ panel_pterodactyl_panel_user }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
     mode: '0755'
 
 - name: Download Wings binary
@@ -12,8 +12,8 @@
     url: "https://github.com/pterodactyl/wings/releases/latest/download/wings_linux_arm64"
     dest: "/usr/local/bin/wings"
     mode: '0755'
-    owner: "{{ panel_pterodactyl_panel_user }}"
-    group: "{{ panel_pterodactyl_panel_user }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
 
 - name: Copy Wings service file
   ansible.builtin.copy:

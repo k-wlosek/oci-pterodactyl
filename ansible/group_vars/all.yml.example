@@ -2,10 +2,11 @@ db_mysql_database: "panel"
 db_mysql_user: "pterodactyl"
 db_mysql_password: "rootpass"
 db_redis_password: "redispass"
+db_mariadb_version: "11"
+db_redis_version: "8-alpine"
 
 
-panel_pterodactyl_panel_user: "pterodactyl"
-panel_pterodactyl_panel_version: "v1.11.11"
+panel_pterodactyl_panel_version: "v1.14.1"
 panel_app_key: "base64_app_key"
 panel_hashids_salt: "hashids_salt_value"
 
@@ -17,8 +18,8 @@ panel_certbot_email: "user@example.com"  # Replace with actual email for certbot
 
 
 mcrouter_mappings:
-  - domain: mc1.failure.ovh
+  - domain: mc1.{{ panel_base_fqdn }}
     port: 25566
-  - domain: mc2.failure.ovh
+  - domain: mc2.{{ panel_base_fqdn }}
     port: 25567
-mcrouter_version: "1.32.3"
+mcrouter_version: "1.45.2"
