@@ -4,3 +4,6 @@ db_mysql_database: "panel"
 db_mysql_user: "pterodactyl"
 db_mysql_password: "userpass"
 db_redis_password: "redispass"
+
+db_mariadb_version: "11"
+db_redis_version: "8-alpine"
