@@ -1,11 +1,14 @@
 ---
-- name: Create directory for DB compose
+- name: Create directory for DB compose and backups
   ansible.builtin.file:
-    path: /opt/pterodactyl-db
+    path: "{{ item }}"
     state: directory
     owner: root
     group: root
     mode: '0755'
+  loop:
+    - /opt/pterodactyl-db
+    - /opt/pterodactyl-db/backups
 
 - name: Deploy docker-compose.yml for MySQL and Redis
   ansible.builtin.template:
