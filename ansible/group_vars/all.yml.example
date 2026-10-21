@@ -6,7 +6,7 @@ db_mariadb_version: "11"
 db_redis_version: "8-alpine"
 
 
-panel_pterodactyl_panel_version: "v1.14.1"
+panel_pterodactyl_panel_version: "v1.15.2"
 panel_app_key: "base64_app_key"
 panel_hashids_salt: "hashids_salt_value"
 
